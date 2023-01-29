@@ -100,8 +100,9 @@ export default function App() {
         );
         if (!hasError) {
           const updatedTeams = [...teams];
-          updatedTeams[teams.indexOf(filtered[0])].preferred =
-            String(newValue).split(",");
+          updatedTeams[teams.indexOf(filtered[0])].preferred = String(newValue)
+            .split(",")
+            .map((f) => f.trim());
           setTeams(updatedTeams);
         }
         return { ...params.props, error: hasError };
@@ -122,8 +123,9 @@ export default function App() {
         );
         if (!hasError) {
           const updatedTeams = [...teams];
-          updatedTeams[teams.indexOf(filtered[0])].noway =
-            String(newValue).split(",");
+          updatedTeams[teams.indexOf(filtered[0])].noway = String(newValue)
+            .split(",")
+            .map((f) => f.trim());
           setTeams(updatedTeams);
         }
         return { ...params.props, error: hasError };
