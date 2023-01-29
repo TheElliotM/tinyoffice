@@ -67,11 +67,11 @@ def generate():
 
     num_teams = len(request_teams)
     teams = [list(range(1, num_teams + 1))] * num_teams
-    team_ids_start = {request_teams[i]["id"] : i + 1 for i in range(len(teams))}
+    team_names = {request_teams[i]["name"] : i + 1 for i in range(len(teams))}
     team_ids_end = {i + 1 : request_teams[i]["id"] for i in range(len(teams))}
     strengths = {i + 1: request_teams[i]["strength"] for i in range(len(teams))}
-    prefers = {i + 1: [team_ids_start[temp] for temp in request_teams[i]["preferred"]] for i in range(len(teams))}
-    no_ways = {i + 1: [team_ids_start[temp] for temp in request_teams[i]["noway"]] for i in range(len(teams))}
+    prefers = {i + 1: [team_names[temp] for temp in request_teams[i]["preferred"]] for i in range(len(teams))}
+    no_ways = {i + 1: [team_names[temp] for temp in request_teams[i]["noway"]] for i in range(len(teams))}
 
     num_floors = len(request_floors)
     floors = {i + 1: request_floors[i]["capacity"] for i in range(num_floors)}
