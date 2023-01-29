@@ -1,4 +1,3 @@
-import Office from "./components/office";
 import React, { useState } from "react";
 import data from "./data.json";
 import Button from "./components/button";
@@ -6,7 +5,6 @@ import Button from "./components/button";
 import {
   DataGrid,
   GridColDef,
-  GridRenderCellParams,
   GridPreProcessEditCellProps,
   GridToolbarContainer,
 } from "@mui/x-data-grid";
@@ -17,7 +15,6 @@ import {
   RocketIcon,
   DownloadIcon,
   UploadIcon,
-  MagicWandIcon,
 } from "@radix-ui/react-icons";
 
 export default function App() {
@@ -237,7 +234,30 @@ export default function App() {
       key: "",
     });
 
+    const fetchStr =
+      "https://api.tinyoffice.tech/save?params=" +
+      JSON.stringify({
+        floors: floors,
+        teams: teams,
+      });
+
     //API CALL
+    fetch(fetchStr)
+      .then((res) => res.json())
+      .then((data) => {
+        setSave({
+          isSaving: false,
+          errored: false,
+          key: data.key,
+        });
+      })
+      .catch((e) => {
+        setSave({
+          isSaving: false,
+          errored: true,
+          key: "",
+        });
+      });
 
     setSave({
       isSaving: false,
@@ -249,55 +269,50 @@ export default function App() {
   async function loadData(key) {
     if (isNaN(key)) return;
 
-    //API CALL
-    // EXAMPLE
-    setFloors(
-      floors.map((d) => {
-        return { ...d, optimalteams: `${key}` };
+    fetch("https://api.tinyoffice.tech/load?key=" + key)
+      .then((res) => res.json())
+      .then((newData) => {
+        setFloors(
+          newData.floors.map((d) => {
+            return { ...d, optimalteams: `${key}` };
+          })
+        );
+        setTeams(
+          newData.teams.map((d) => {
+            return { ...d };
+          })
+        );
       })
-    );
-    setTeams(
-      teams.map((d) => {
-        return { ...d };
-      })
-    );
+      .catch((e) => {
+        console.log(e);
+      });
   }
 
   async function generateData() {
     const fetchStr =
-      "https://api.tinyoffice.tech/generate?params=" +
+      "http://localhost:5000/generate?params=" +
       JSON.stringify({
         floors: floors,
         teams: teams,
       });
 
-    console.log(fetchStr);
-
     fetch(fetchStr)
       .then((res) => res.json())
       .then((data) => {
-        for (let i in data) {
-          //i is floor id
-          const resultTeams = data[i];
-          // teams is list of teams to fit on floor
-          const teamNames = resultTeams.map((id) => {
-            const filtered = floors.filter(
-              (o) => o.id === selected.floorSelected
-            );
-            if (filtered.length > 0)
-              return floors[floors.indexOf(filtered[0])].name;
-          });
-
-          setFloors(
-            [...floors].map((d, i) => {
-              return {
-                ...d,
-                id: i,
-                optimalteams: teamNames,
-              };
-            })
-          );
-        }
+        setFloors(
+          [...floors].map((d, iD) => {
+            return {
+              ...d,
+              id: iD,
+              optimalteams: data[d.id].map((x) => {
+                for (let t in teams) {
+                  if (teams[t].id === x) return teams[t].name;
+                }
+                return null;
+              }),
+            };
+          })
+        );
       })
       .catch((e) => {
         console.error(e);
@@ -380,11 +395,11 @@ export default function App() {
                 </Button>
               </div>
               <div className="col-span-1 m-5">
-                <p className="my-2">Save Data for Future Re-use</p>
-                <Button onClick={saveData} className="inline-block">
+                {/*<p className="my-2">Save Data for Future Re-use</p>
+                 <Button onClick={saveData} className="inline-block">
                   <UploadIcon className="inline-block align-middle mb-[0.25em] mr-1" />
                   <span>Save</span>
-                </Button>
+                </Button> */}
                 <p
                   className={`italic text-base font-semibold ${
                     save.errored ? `text-red-800` : ``
@@ -398,7 +413,7 @@ export default function App() {
                     ? ``
                     : `Saved! Your key is: ${save.key}`}
                 </p>
-                <p className="my-2">Load Data</p>
+                {/* <p className="my-2">Load Data</p>
                 <div>
                   <input
                     placeholder="Your Key Here"
@@ -409,7 +424,7 @@ export default function App() {
                 <Button onClick={() => loadData(key)} className="inline-block">
                   <DownloadIcon className="inline-block align-middle mb-[0.25em] mr-1" />
                   <span>Load</span>
-                </Button>
+                </Button> */}
               </div>
             </div>
           </div>

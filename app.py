@@ -10,9 +10,9 @@ from bson import json_util, ObjectId
 # app.config["DEBUG"] = True
 app = Flask(__name__)
 
-cluster = MongoClient(os.environ.get("MONGOPASS"))
-db = cluster["Office"]
-collection = db["company"]
+# cluster = MongoClient("mongodb+srv://Nali:yora767ge@th-2023.etc6vuw.mongodb.net/test")
+# db = cluster["Office"]
+# collection = db["company"]
 
 # app.config["DEBUG"] = True
 cors = CORS(app)
@@ -211,20 +211,20 @@ def generate():
 
     # ((7,), (2, 3), (1, 11), (4,), (6, 10), 0.9655172413793104, 0.7272727272727273, 1.0, 1.5688050112220524)
 
-@app.route("/save", methods = ["GET"])
-def save():
-    request_data = json.loads(request.args.get("params"))
-    request_floors = request_data["floors"]
-    request_teams = request_data["teams"]
-    request_total = {"floors": request_floors, "teams": request_teams}
-    insertion = db.company.insert_one(request_total)
-    return {"key": str(insertion.inserted_id)}
+# @app.route("/save", methods = ["GET"])
+# def save():
+#     request_data = json.loads(request.args.get("params"))
+#     request_floors = request_data["floors"]
+#     request_teams = request_data["teams"]
+#     request_total = {"floors": request_floors, "teams": request_teams}
+#     insertion = db.company.insert_one(request_total)
+#     return {"key": str(insertion.inserted_id)}
 
-@app.route("/load", methods = ["GET"])
-def load():
-    companyID = request.args.get("key")
-    data = db.company.find_one(ObjectId(companyID))
-    return str(data)
+# @app.route("/load", methods = ["GET"])
+# def load():
+#     companyID = request.args.get("key")
+#     data = db.company.find_one(ObjectId(companyID))
+#     return str(data)
 
 
 if __name__ == '__main__':
