@@ -1,16 +1,21 @@
 from flask import Flask, request, render_template
 from flask_cors import CORS
 from itertools import chain, combinations, product
-from flask_pymongo import PyMongo
+import pymongo
+from pymongo import MongoClient
 import json
 import copy
-
+import os
+from bson import json_util, ObjectId
+# app.config["DEBUG"] = True
 app = Flask(__name__)
+
+cluster = MongoClient(os.environ.get("MONGOPASS"))
+db = cluster["Office"]
+collection = db["company"]
+
 # app.config["DEBUG"] = True
 cors = CORS(app)
-# app.config["CORS_HEADERS"] = "Content-Type"
-app.config["MONGO_URI"] = "mongodb://165.91.13.149/Office"
-mongo = PyMongo(app)
 
 # Returns the powerset of the list (code taken from itertools documentation)
 def powerset(iterable):
@@ -206,14 +211,20 @@ def generate():
 
     # ((7,), (2, 3), (1, 11), (4,), (6, 10), 0.9655172413793104, 0.7272727272727273, 1.0, 1.5688050112220524)
 
-@app.route("/save", methods = ["POST"])
+@app.route("/save", methods = ["GET"])
 def save():
-    pass
+    request_data = json.loads(request.args.get("params"))
+    request_floors = request_data["floors"]
+    request_teams = request_data["teams"]
+    request_total = {"floors": request_floors, "teams": request_teams}
+    insertion = db.company.insert_one(request_total)
+    return {"key": str(insertion.inserted_id)}
 
 @app.route("/load", methods = ["GET"])
 def load():
-    online_users = mongo.db.company.find()
-    return online_users
+    companyID = request.args.get("key")
+    data = db.company.find_one(ObjectId(companyID))
+    return str(data)
 
 
 if __name__ == '__main__':

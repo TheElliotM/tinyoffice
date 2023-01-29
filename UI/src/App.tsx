@@ -183,26 +183,6 @@ export default function App() {
       cellClassName: "theme--noedit",
       headerClassName: "theme--noedit",
     },
-    {
-      field: "view",
-      editable: false,
-      headerName: "Visualize",
-      renderCell: (params: GridRenderCellParams<String>) => (
-        <Button
-          disabled={
-            params.row.optimalteams &&
-            params.row.optimalteams !== "None" &&
-            params.row.optimalteams !== "Press Generate"
-              ? false
-              : true
-          }
-          className="inline-block"
-        >
-          <MagicWandIcon className="inline-block align-middle mb-[0.25em] mr-3" />
-          <span>View</span>
-        </Button>
-      ),
-    },
   ];
 
   function randomIDGen() {
@@ -284,30 +264,44 @@ export default function App() {
   }
 
   async function generateData() {
-    const output = [
-      {
-        floorID: floors[0].id,
-        teamIDs: [9, 3],
-      },
-      {
-        floorID: floors[2].id,
-        teamIDs: [7, 3],
-      },
-    ];
+    const fetchStr =
+      "https://api.tinyoffice.tech/generate?params=" +
+      JSON.stringify({
+        floors: floors,
+        teams: teams,
+      });
 
-    setFloors(
-      floors.map((d, i) => {
-        const optimalTeamChanges = output.filter((o) => o.floorID === d.id);
-        return {
-          ...d,
-          id: i,
-          optimalteams:
-            optimalTeamChanges.length > 0
-              ? optimalTeamChanges[0].teamIDs.join(",")
-              : "None",
-        };
+    console.log(fetchStr);
+
+    fetch(fetchStr)
+      .then((res) => res.json())
+      .then((data) => {
+        for (let i in data) {
+          //i is floor id
+          const resultTeams = data[i];
+          // teams is list of teams to fit on floor
+          const teamNames = resultTeams.map((id) => {
+            const filtered = floors.filter(
+              (o) => o.id === selected.floorSelected
+            );
+            if (filtered.length > 0)
+              return floors[floors.indexOf(filtered[0])].name;
+          });
+
+          setFloors(
+            [...floors].map((d, i) => {
+              return {
+                ...d,
+                id: i,
+                optimalteams: teamNames,
+              };
+            })
+          );
+        }
       })
-    );
+      .catch((e) => {
+        console.error(e);
+      });
   }
 
   return (
@@ -417,14 +411,6 @@ export default function App() {
                   <span>Load</span>
                 </Button>
               </div>
-            </div>
-            <div className="border-white border-[5px] border-opacity-75 bg-white bg-opacity-25 rounded-lg row-span-2">
-              <div className="absolute z-50">
-                <p className="m-3 text-xl text-white font-bold">
-                  Floor Visualizer
-                </p>
-              </div>
-              <Office></Office>
             </div>
           </div>
         </div>
