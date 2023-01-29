@@ -4,7 +4,7 @@ import json
 import copy
 
 app = Flask(__name__)
-app.config["DEBUG"] = True
+# app.config["DEBUG"] = True
 
 # Returns the powerset of the list (code taken from itertools documentation)
 def powerset(iterable):
@@ -70,22 +70,22 @@ def generate():
     floors = {i + 1: request_floors[i]["capacity"] for i in range(num_floors)}
     total_space = sum(floors.values())
 
-    print(f"request_data: {request_data}")
-    print()
-    print(f"request_teams: {request_teams}")
-    print()
-    print(f"request_floors: {request_floors}")
-    print()
-    print(f"num_teams: {num_teams}")
-    print(f"teams: {teams}")
-    print(f"team ids: {team_ids}")
-    print(f"strengths: {strengths}")
-    print(f"prefers: {prefers}")
-    print(f"no_ways: {no_ways}")
-    print()
-    print(f"num_floors: {num_floors}")
-    print(f"floors: {floors}")
-    print(f"total_space: {total_space}")
+    # print(f"request_data: {request_data}")
+    # print()
+    # print(f"request_teams: {request_teams}")
+    # print()
+    # print(f"request_floors: {request_floors}")
+    # print()
+    # print(f"num_teams: {num_teams}")
+    # print(f"teams: {teams}")
+    # print(f"team ids: {team_ids}")
+    # print(f"strengths: {strengths}")
+    # print(f"prefers: {prefers}")
+    # print(f"no_ways: {no_ways}")
+    # print()
+    # print(f"num_floors: {num_floors}")
+    # print(f"floors: {floors}")
+    # print(f"total_space: {total_space}")
 
     for i in range(1, num_teams):
         nos = no_ways[i]
@@ -182,7 +182,7 @@ def generate():
     if scores == []:
         return []
     else:
-        print({f"{request_floors[i]['id']}": scores[-1][i] for i in range(num_floors)})
+        # print({f"{request_floors[i]['id']}": scores[-1][i] for i in range(num_floors)})
         return {f"{request_floors[i]['id']}": scores[-1][i] for i in range(num_floors)}
 
     # ((7,), (2, 3), (1, 11), (4,), (6, 10), 0.9655172413793104, 0.7272727272727273, 1.0, 1.5688050112220524)
