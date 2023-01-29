@@ -4,52 +4,38 @@ import data from "./data.json";
 import Button from "./components/button";
 import {
   DataGrid,
-  GridRowsProp,
   GridColDef,
   GridRenderCellParams,
   GridPreProcessEditCellProps,
-  useGridApiRef,
+  GridToolbarContainer,
 } from "@mui/x-data-grid";
+import { randInt } from "three/src/math/MathUtils";
+import {
+  PlusCircledIcon,
+  TrashIcon,
+  RocketIcon,
+  DownloadIcon,
+  UploadIcon,
+  MagicWandIcon,
+} from "@radix-ui/react-icons";
 
-function App() {
-  const [floors, setFloors] = useState<
-    Array<{ name: string; capacity: number }>
-  >(data.floors);
-  const [teams, setTeams] = useState<
-    Array<{
-      name: string;
-      strength: number;
-      preferred: Array<string>;
-      noway: Array<string>;
-    }>
-  >(data.teams);
-  const [results, setResults] = useState([]);
-
-  const apiRef = useGridApiRef();
-
-  let floorsRows: GridRowsProp = [];
-  let teamRows: GridRowsProp = [];
-
-  const floorRowsGenerationArray: object[] = [];
-  for (let id in floors) {
-    const floor = floors[id];
-    floorRowsGenerationArray.push({
-      ...floor,
-      optimalteams: "Press Generate",
-      id: id,
-    });
-  }
-  floorsRows = floorRowsGenerationArray;
-
-  const teamRowsGenerationArray: object[] = [];
-  for (let id in teams) {
-    const team = teams[id];
-    teamRowsGenerationArray.push({
-      ...team,
-      id: id,
-    });
-  }
-  teamRows = teamRowsGenerationArray;
+export default function App() {
+  const [floors, setFloors] = useState(
+    data.floors.map((d) => {
+      return { ...d, id: randomIDGen(), optimalteams: "Press Generate" };
+    })
+  );
+  const [teams, setTeams] = useState(
+    data.teams.map((d) => {
+      return { ...d, id: randomIDGen() };
+    })
+  );
+  const [save, setSave] = useState({
+    isSaving: false,
+    key: "",
+    errored: false,
+  });
+  const [key, setKey] = useState("");
 
   const teamColumns: GridColDef[] = [
     {
@@ -57,15 +43,17 @@ function App() {
       editable: true,
       headerName: "Team Name",
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
-        let hasError = false;
-        if (params.hasChanged) {
-          const newValue = params.props.value;
-          if (newValue.match("^[A-Za-z0-9]+$")) {
-            const newTeams = teams;
-            newTeams[params.id].name = newValue;
-            setTeams(newTeams);
-            apiRef.current.updateRows([{ id: params.id, name: newValue }]);
-          } else hasError = true;
+        const newValue = params.props.value;
+        const filtered = teams.filter((o) => o.id == params.id);
+        const hasError = !(
+          params.hasChanged &&
+          newValue.match(/^[A-Za-z0-9 ]+$/) &&
+          filtered.length > 0
+        );
+        if (!hasError) {
+          const updatedTeams = [...teams];
+          updatedTeams[teams.indexOf(filtered[0])].name = newValue;
+          setTeams(updatedTeams);
         }
         return { ...params.props, error: hasError };
       },
@@ -74,17 +62,108 @@ function App() {
       field: "strength",
       editable: true,
       headerName: "Strength (Size)",
-      renderCell: (params: GridRenderCellParams<String>) => (
-        <strong>{params.value}</strong>
-      ),
+      preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
+        const newValue = params.props.value;
+        const filtered = teams.filter((o) => o.id == params.id);
+        const hasError = !(
+          params.hasChanged &&
+          !isNaN(newValue) &&
+          filtered.length > 0
+        );
+        if (!hasError) {
+          const updatedTeams = [...teams];
+          updatedTeams[teams.indexOf(filtered[0])].strength = Number(newValue);
+          setTeams(updatedTeams);
+        }
+        return { ...params.props, error: hasError };
+      },
     },
-    { field: "preferred", editable: true, headerName: "Preferred" },
-    { field: "noway", editable: true, headerName: "No-Way" },
+    {
+      field: "preferred",
+      editable: true,
+      headerName: "Preferred",
+      preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
+        const newValue = params.props.value;
+        const filtered = teams.filter((o) => o.id == params.id);
+        const hasError = !(
+          params.hasChanged &&
+          newValue.match(/^[A-Za-z0-9, ]+$/) &&
+          filtered.length > 0
+        );
+        if (!hasError) {
+          const updatedTeams = [...teams];
+          updatedTeams[teams.indexOf(filtered[0])].preferred =
+            String(newValue).split(",");
+          setTeams(updatedTeams);
+        }
+        return { ...params.props, error: hasError };
+      },
+    },
+    {
+      field: "noway",
+      editable: true,
+      headerName: "No-Way",
+      preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
+        const newValue = params.props.value;
+        const filtered = teams.filter((o) => o.id == params.id);
+        const hasError = !(
+          params.hasChanged &&
+          newValue.match(/^[A-Za-z0-9, ]+$/) &&
+          filtered.length > 0
+        );
+        if (!hasError) {
+          const updatedTeams = [...teams];
+          updatedTeams[teams.indexOf(filtered[0])].noway =
+            String(newValue).split(",");
+          setTeams(updatedTeams);
+        }
+        return { ...params.props, error: hasError };
+      },
+    },
   ];
 
   const floorColumns: GridColDef[] = [
-    { field: "name", editable: true, headerName: "Floor Name" },
-    { field: "capacity", editable: true, headerName: "Capacity" },
+    {
+      field: "name",
+      editable: true,
+      headerName: "Floor Name",
+      preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
+        const newValue = params.props.value;
+        const filtered = floors.filter((o) => o.id == params.id);
+        const hasError = !(
+          params.hasChanged &&
+          newValue.match(/^[A-Za-z0-9, ]+$/) &&
+          filtered.length > 0
+        );
+        if (!hasError) {
+          const updatedFloors = [...floors];
+          updatedFloors[floors.indexOf(filtered[0])].name = newValue;
+          setFloors(updatedFloors);
+        }
+        return { ...params.props, error: hasError };
+      },
+    },
+    {
+      field: "capacity",
+      editable: true,
+      headerName: "Capacity",
+      preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
+        const newValue = params.props.value;
+        const filtered = floors.filter((o) => o.id == params.id);
+        const hasError = !(
+          params.hasChanged &&
+          !isNaN(newValue) &&
+          filtered.length > 0
+        );
+        if (!hasError) {
+          const updatedFloors = [...floors];
+          updatedFloors[floors.indexOf(filtered[0])].capacity =
+            Number(newValue);
+          setFloors(updatedFloors);
+        }
+        return { ...params.props, error: hasError };
+      },
+    },
     {
       field: "optimalteams",
       editable: false,
@@ -98,10 +177,111 @@ function App() {
       editable: false,
       headerName: "Visualize",
       renderCell: (params: GridRenderCellParams<String>) => (
-        <Button disabled>View</Button>
+        <Button
+          disabled={
+            params.row.optimalteams &&
+            params.row.optimalteams !== "None" &&
+            params.row.optimalteams !== "Press Generate"
+              ? false
+              : true
+          }
+          className="inline-block"
+        >
+          <MagicWandIcon className="inline-block align-middle mb-[0.25em] mr-3" />
+          <span>View</span>
+        </Button>
       ),
     },
   ];
+
+  function randomIDGen() {
+    return randInt(0, 100000000);
+  }
+
+  function addTeamRow() {
+    const teamsCopy = [...teams];
+    teamsCopy.push({
+      name: "New Team",
+      strength: 0,
+      preferred: [],
+      noway: [],
+      id: randomIDGen(),
+    });
+    setTeams(teamsCopy);
+  }
+
+  function addFloorRow() {
+    const floorsCopy = [...floors];
+    floorsCopy.push({
+      name: "New Floor",
+      capacity: 0,
+      id: randomIDGen(),
+      optimalteams: "Press Generate",
+    });
+    setFloors(floorsCopy);
+  }
+
+  async function saveData() {
+    setSave({
+      isSaving: true,
+      errored: false,
+      key: "",
+    });
+
+    //API CALL
+
+    setSave({
+      isSaving: false,
+      errored: false,
+      key: "523632",
+    });
+  }
+
+  async function loadData(key) {
+    if (isNaN(key)) return;
+
+    //API CALL
+    // EXAMPLE
+    setFloors(
+      floors.map((d) => {
+        return { ...d, optimalteams: `${key}` };
+      })
+    );
+    setTeams(
+      teams.map((d) => {
+        return { ...d };
+      })
+    );
+  }
+
+  async function generateData() {
+    const output = [
+      {
+        floorID: floors[0].id,
+        teamIDs: [9, 3],
+      },
+      {
+        floorID: floors[2].id,
+        teamIDs: [7, 3],
+      },
+    ];
+
+    setFloors(
+      floors.map((d, i) => {
+        const optimalTeamChanges = output.filter((o) => o.floorID == d.id);
+        return {
+          ...d,
+          id: i,
+          optimalteams:
+            optimalTeamChanges.length > 0
+              ? optimalTeamChanges[0].teamIDs.join(",")
+              : "None",
+        };
+      })
+    );
+  }
+
+  console.log("re-render");
 
   return (
     <div className="bg-gradient-to-r from-cyan-500 to-blue-500 min-h-screen">
@@ -117,15 +297,33 @@ function App() {
           <div className="min-h-full h-[75vh] lg:h-[100vh] m-8 grid grid-rows-2 gap-10">
             <div className="bg-white bg-opacity-25 rounded-lg">
               <DataGrid
+                components={{
+                  Toolbar: GridToolBar,
+                }}
+                componentsProps={{
+                  toolbar: {
+                    onClickAdd: addTeamRow,
+                    onClickRemove: {},
+                  },
+                }}
                 sx={{ borderWidth: "5px" }}
                 autoPageSize
                 experimentalFeatures={{ newEditingApi: true }}
-                rows={teamRows}
+                rows={teams}
                 columns={teamColumns}
               />
             </div>
             <div className="bg-white bg-opacity-25 rounded-lg">
               <DataGrid
+                components={{
+                  Toolbar: GridToolBar,
+                }}
+                componentsProps={{
+                  toolbar: {
+                    onClickAdd: addFloorRow,
+                    onClickRemove: {},
+                  },
+                }}
                 sx={{
                   borderWidth: "5px",
                   "& .theme--noedit": {
@@ -134,7 +332,7 @@ function App() {
                 }}
                 autoPageSize
                 experimentalFeatures={{ newEditingApi: true }}
-                rows={floorsRows}
+                rows={floors}
                 columns={floorColumns}
               />
             </div>
@@ -145,13 +343,42 @@ function App() {
                 <p className="mb-5">
                   Finalize Data and Generate Building Layout
                 </p>
-                <Button>Generate</Button>
+                <Button onClick={generateData} className="inline-block">
+                  <RocketIcon className="inline-block align-middle mb-[0.25em] mr-1" />
+                  <span>Generate</span>
+                </Button>
               </div>
               <div className="col-span-1 m-5">
                 <p className="my-2">Save Data for Future Re-use</p>
-                <Button>Save</Button>
+                <Button onClick={saveData} className="inline-block">
+                  <UploadIcon className="inline-block align-middle mb-[0.25em] mr-1" />
+                  <span>Save</span>
+                </Button>
+                <p
+                  className={`italic text-base font-semibold ${
+                    save.errored ? `text-red-800` : ``
+                  }`}
+                >
+                  {save.isSaving
+                    ? `Saving...`
+                    : save.errored
+                    ? `Error! Try Again.`
+                    : save.key == ""
+                    ? ``
+                    : `Saved! Your key is: ${save.key}`}
+                </p>
                 <p className="my-2">Load Data</p>
-                <Button>Load</Button>
+                <div>
+                  <input
+                    placeholder="Your Key Here"
+                    className="mb-4 text-black font-normal text-base rounded-lg pl-1 py-1 w-[1/2]"
+                    onInput={(e) => setKey(e.currentTarget.value)}
+                  ></input>
+                </div>
+                <Button onClick={() => loadData(key)} className="inline-block">
+                  <DownloadIcon className="inline-block align-middle mb-[0.25em] mr-1" />
+                  <span>Load</span>
+                </Button>
               </div>
             </div>
             <div className="border-white border-[5px] border-opacity-75 bg-white bg-opacity-25 rounded-lg row-span-2">
@@ -181,4 +408,17 @@ function App() {
   );
 }
 
-export default App;
+function GridToolBar(props) {
+  return (
+    <GridToolbarContainer>
+      <Button onClick={props.onClickAdd} className="inline-block">
+        <PlusCircledIcon className="inline-block align-middle mb-[0.25em] mr-1" />
+        <span>Add Row</span>
+      </Button>
+      <Button onClick={props.onClickRemove} className="inline-block">
+        <TrashIcon className="inline-block align-middle mb-[0.25em] mr-1" />
+        <span>Remove Selected Row</span>
+      </Button>
+    </GridToolbarContainer>
+  );
+}
