@@ -1,8 +1,13 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from itertools import chain, combinations, product
+from flask_pymongo import PyMongo
+import json
+import copy
 
 app = Flask(__name__)
-app.config["DEBUG"] = True
+# app.config["DEBUG"] = True
+app.config["MONGO_URI"] = "mongodb://165.91.13.149/Office"
+mongo = PyMongo(app)
 
 # Returns the powerset of the list (code taken from itertools documentation)
 def powerset(iterable):
@@ -45,43 +50,45 @@ def generate():
     #         "id": TK,
     #         "name": "TK",
     #         "strength": TK,
-    #         "preferred": TK,
-    #         "noway": TK
+    #         "preferred": [TK],
+    #         "noway": [TK]
     #     },
     #     {
     #         ...
     #     }
     # ]
 
-    request_data = request.get_json(force = True)
-    request_teams = request_data["floors"]
-    request_floors = request_data["teams"]
+    request_data = json.loads(request.args.get("params"))
+    request_floors = request_data["floors"]
+    request_teams = request_data["teams"]
 
     num_teams = len(request_teams)
     teams = [list(range(1, num_teams + 1))] * num_teams
-    strengths = {team: strength for (team, strength) in (teams, request_teams[team - 1]["strength"])}
-    prefers = {team: prefer for (team, prefer) in (teams, request_teams[team - 1]["preferred"])}
-    no_ways = {team: no_way for (team, no_way) in (teams, request_teams[team - 1]["noway"])}
+    team_ids = {request_teams[i]["id"] : i + 1 for i in range(len(teams))}
+    strengths = {i + 1: request_teams[i]["strength"] for i in range(len(teams))}
+    prefers = {i + 1: [team_ids[temp] for temp in request_teams[i]["preferred"]] for i in range(len(teams))}
+    no_ways = {i + 1: [team_ids[temp] for temp in request_teams[i]["noway"]] for i in range(len(teams))}
 
     num_floors = len(request_floors)
-    floors = {floor: capacity for (floor, capacity) in (list(range(1, num_floors + 1)), request_floors[floor - 1]["capacity"])}
+    floors = {i + 1: request_floors[i]["capacity"] for i in range(num_floors)}
     total_space = sum(floors.values())
 
-    print(f"request_data: {request_data}")
-    print()
-    print(f"request_teams: {request_teams}")
-    print()
-    print(f"request_floors: {request_floors}")
-    print()
-    print(f"num_teams: {num_teams}")
-    print(f"teams: {teams}")
-    print(f"strengths: {strengths}")
-    print(f"prefers: {prefers}")
-    print(f"no_ways: {no_ways}")
-    print()
-    print(f"num_floors: {num_floors}")
-    print(f"floors: {floors}")
-    print(f"total_space: {total_space}")
+    # print(f"request_data: {request_data}")
+    # print()
+    # print(f"request_teams: {request_teams}")
+    # print()
+    # print(f"request_floors: {request_floors}")
+    # print()
+    # print(f"num_teams: {num_teams}")
+    # print(f"teams: {teams}")
+    # print(f"team ids: {team_ids}")
+    # print(f"strengths: {strengths}")
+    # print(f"prefers: {prefers}")
+    # print(f"no_ways: {no_ways}")
+    # print()
+    # print(f"num_floors: {num_floors}")
+    # print(f"floors: {floors}")
+    # print(f"total_space: {total_space}")
 
     for i in range(1, num_teams):
         nos = no_ways[i]
@@ -91,19 +98,18 @@ def generate():
             except:
                 continue
             if i in teams[no - 1]:
-                try:
-                    teams[no - 1].remove(i)
-                except:
-                    continue
+                teams[no - 1].remove(i)
 
     # floors_final is the list of all possible teams on all floors
     # floors_final[index] is the list of all possible teams on the indexth floor (starting from index = 0)
     # floors_final[index][i] is the list of all possible teams on the indexth floor for the ith team (starting from index = 0, i = 0)
-    floors_final = [teams[:]] * num_floors
+    floors_final = []
+    for i in range(num_floors):
+        floors_final.append(teams[:])
     subsets = []
     temp_floor = []
     temp_subsets = []
-    sum = 0
+    strength_sum = 0
 
     for index, floor in enumerate(floors_final):
         for i in range(num_teams):
@@ -112,26 +118,26 @@ def generate():
             temp_subsets = subsets[:]
             for subset in subsets:
                 invalid = False
-                sum = 0
+                strength_sum = 0
                 for element in subset:
-                    sum += strengths[element]
+                    strength_sum += strengths[element]
                     if element in chain(*[no_ways[temp] for temp in subset]):
                         invalid = True
-                if invalid == True or sum > floors[chr(65 + index)] or sum < floors[chr(65 + index)] * 0.25:
+                if invalid == True or strength_sum > floors[index + 1] or strength_sum < floors[index + 1] * 0.25:
                     temp_subsets.remove(subset)
                     invalid = False
             subsets = temp_subsets
             floors_final[index][i] = subsets
-
         # print(f"FLOOR {index}")
         # for i in range(num_teams):
         #     print(f"Team {i + 1} can be with {floors_final[index][i]}")
-        # print()
+        # print(floors_final)
 
     all_combinations = []
     floor_combinations = []
+    #print(floors_final)
     #print("ALL POSSIBLE FLOOR COMBINATIONS")
-    for floor in floors_final:
+    for index_floor, floor in enumerate(floors_final):
         #print(f"------FLOOR {index_floor}------")
         floor_combinations = []
         for team in floor:
@@ -175,7 +181,12 @@ def generate():
             scores.append(building + (space_score, number_score, like_score, total_score))
 
     scores.sort(key = lambda x: x[-1])
-    print(scores[-1])
+    #print(scores[-1])
+    if scores == []:
+        return []
+    else:
+        # print({f"{request_floors[i]['id']}": scores[-1][i] for i in range(num_floors)})
+        return {f"{request_floors[i]['id']}": scores[-1][i] for i in range(num_floors)}
 
     # ((7,), (2, 3), (1, 11), (4,), (6, 10), 0.9655172413793104, 0.7272727272727273, 1.0, 1.5688050112220524)
 
@@ -185,7 +196,9 @@ def save():
 
 @app.route("/load", methods = ["GET"])
 def load():
-    pass
+    online_users = mongo.db.company.find()
+    return online_users
+
 
 if __name__ == '__main__':
     app.run(debug=True)
