@@ -61,10 +61,11 @@ def generate():
 
     num_teams = len(request_teams)
     teams = [list(range(1, num_teams + 1))] * num_teams
-    team_ids = {request_teams[i]["id"] : i + 1 for i in range(len(teams))}
+    team_ids_start = {request_teams[i]["id"] : i + 1 for i in range(len(teams))}
+    team_ids_end = {i + 1 : request_teams[i]["id"] for i in range(len(teams))}
     strengths = {i + 1: request_teams[i]["strength"] for i in range(len(teams))}
-    prefers = {i + 1: [team_ids[temp] for temp in request_teams[i]["preferred"]] for i in range(len(teams))}
-    no_ways = {i + 1: [team_ids[temp] for temp in request_teams[i]["noway"]] for i in range(len(teams))}
+    prefers = {i + 1: [team_ids_start[temp] for temp in request_teams[i]["preferred"]] for i in range(len(teams))}
+    no_ways = {i + 1: [team_ids_start[temp] for temp in request_teams[i]["noway"]] for i in range(len(teams))}
 
     num_floors = len(request_floors)
     floors = {i + 1: request_floors[i]["capacity"] for i in range(num_floors)}
@@ -180,10 +181,10 @@ def generate():
     scores.sort(key = lambda x: x[-1])
     #print(scores[-1])
     if scores == []:
-        return []
+        return {"error": "No matches found."}
     else:
         # print({f"{request_floors[i]['id']}": scores[-1][i] for i in range(num_floors)})
-        return {f"{request_floors[i]['id']}": scores[-1][i] for i in range(num_floors)}
+        return {f"{request_floors[i]['id']}": [team_ids_end[temp] for temp in scores[-1][i]] for i in range(num_floors)}
 
     # ((7,), (2, 3), (1, 11), (4,), (6, 10), 0.9655172413793104, 0.7272727272727273, 1.0, 1.5688050112220524)
 
