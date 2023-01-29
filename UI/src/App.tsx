@@ -22,11 +22,6 @@ export default function App() {
       return { ...d, id: randomIDGen() };
     })
   );
-  const [save, setSave] = useState({
-    isSaving: false,
-    key: "",
-    errored: false,
-  });
   const [selected, setSelected] = useState({
     teamSelected: 0,
     floorSelected: 0,
@@ -221,6 +216,12 @@ export default function App() {
   }
 
   async function generateData() {
+    setFloors(
+      floors.map((d) => {
+        return { ...d, optimalteams: "Loading..." };
+      })
+    );
+
     const fetchStr =
       "https://api.tinyoffice.tech/generate?params=" +
       JSON.stringify({
@@ -332,19 +333,6 @@ export default function App() {
                   <UploadIcon className="inline-block align-middle mb-[0.25em] mr-1" />
                   <span>Save</span>
                 </Button> */}
-                <p
-                  className={`italic text-base font-semibold ${
-                    save.errored ? `text-red-800` : ``
-                  }`}
-                >
-                  {save.isSaving
-                    ? `Saving...`
-                    : save.errored
-                    ? `Error! Try Again.`
-                    : save.key === ""
-                    ? ``
-                    : `Saved! Your key is: ${save.key}`}
-                </p>
                 {/* <p className="my-2">Load Data</p>
                 <div>
                   <input
