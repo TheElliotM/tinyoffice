@@ -15,3 +15,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.MuiDataGrid-cell--withRenderer {
+  overflow: visible;
+}
+
+.optionListContainer {
+  position: absolute;
+  top: 0;
+  z-index: 50;
+  overflow: visible;
+  overflow-wrap: normal;
+}

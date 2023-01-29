@@ -2,6 +2,7 @@ import Office from "./components/office";
 import React, { useState } from "react";
 import data from "./data.json";
 import Button from "./components/button";
+
 import {
   DataGrid,
   GridColDef,
@@ -36,15 +37,20 @@ export default function App() {
     errored: false,
   });
   const [key, setKey] = useState("");
+  const [selected, setSelected] = useState({
+    teamSelected: 0,
+    floorSelected: 0,
+  });
 
   const teamColumns: GridColDef[] = [
     {
       field: "name",
       editable: true,
+      flex: 0.1,
       headerName: "Team Name",
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
         const newValue = params.props.value;
-        const filtered = teams.filter((o) => o.id == params.id);
+        const filtered = teams.filter((o) => o.id === params.id);
         const hasError = !(
           params.hasChanged &&
           newValue.match(/^[A-Za-z0-9 ]+$/) &&
@@ -62,9 +68,10 @@ export default function App() {
       field: "strength",
       editable: true,
       headerName: "Strength (Size)",
+      flex: 0.1,
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
         const newValue = params.props.value;
-        const filtered = teams.filter((o) => o.id == params.id);
+        const filtered = teams.filter((o) => o.id === params.id);
         const hasError = !(
           params.hasChanged &&
           !isNaN(newValue) &&
@@ -82,9 +89,10 @@ export default function App() {
       field: "preferred",
       editable: true,
       headerName: "Preferred",
+      flex: 0.3,
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
         const newValue = params.props.value;
-        const filtered = teams.filter((o) => o.id == params.id);
+        const filtered = teams.filter((o) => o.id === params.id);
         const hasError = !(
           params.hasChanged &&
           newValue.match(/^[A-Za-z0-9, ]+$/) &&
@@ -92,8 +100,9 @@ export default function App() {
         );
         if (!hasError) {
           const updatedTeams = [...teams];
-          updatedTeams[teams.indexOf(filtered[0])].preferred =
-            String(newValue).split(",");
+          updatedTeams[teams.indexOf(filtered[0])].preferred = String(newValue)
+            .split(",")
+            .map((f) => f.trim());
           setTeams(updatedTeams);
         }
         return { ...params.props, error: hasError };
@@ -103,9 +112,10 @@ export default function App() {
       field: "noway",
       editable: true,
       headerName: "No-Way",
+      flex: 0.3,
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
         const newValue = params.props.value;
-        const filtered = teams.filter((o) => o.id == params.id);
+        const filtered = teams.filter((o) => o.id === params.id);
         const hasError = !(
           params.hasChanged &&
           newValue.match(/^[A-Za-z0-9, ]+$/) &&
@@ -113,8 +123,9 @@ export default function App() {
         );
         if (!hasError) {
           const updatedTeams = [...teams];
-          updatedTeams[teams.indexOf(filtered[0])].noway =
-            String(newValue).split(",");
+          updatedTeams[teams.indexOf(filtered[0])].noway = String(newValue)
+            .split(",")
+            .map((f) => f.trim());
           setTeams(updatedTeams);
         }
         return { ...params.props, error: hasError };
@@ -129,7 +140,7 @@ export default function App() {
       headerName: "Floor Name",
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
         const newValue = params.props.value;
-        const filtered = floors.filter((o) => o.id == params.id);
+        const filtered = floors.filter((o) => o.id === params.id);
         const hasError = !(
           params.hasChanged &&
           newValue.match(/^[A-Za-z0-9, ]+$/) &&
@@ -149,7 +160,7 @@ export default function App() {
       headerName: "Capacity",
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
         const newValue = params.props.value;
-        const filtered = floors.filter((o) => o.id == params.id);
+        const filtered = floors.filter((o) => o.id === params.id);
         const hasError = !(
           params.hasChanged &&
           !isNaN(newValue) &&
@@ -221,6 +232,24 @@ export default function App() {
     setFloors(floorsCopy);
   }
 
+  function removeTeamRow() {
+    const teamsCopy = [...teams];
+    const filtered = teams.filter((o) => o.id === selected.teamSelected);
+    if (filtered.length > 0) {
+      teamsCopy.splice(teamsCopy.indexOf(filtered[0]), 1);
+      setTeams(teamsCopy);
+    }
+  }
+
+  function removeFloorRow() {
+    const floorsCopy = [...floors];
+    const filtered = floors.filter((o) => o.id === selected.floorSelected);
+    if (filtered.length > 0) {
+      floorsCopy.splice(floorsCopy.indexOf(filtered[0]), 1);
+      setFloors(floorsCopy);
+    }
+  }
+
   async function saveData() {
     setSave({
       isSaving: true,
@@ -268,7 +297,7 @@ export default function App() {
 
     setFloors(
       floors.map((d, i) => {
-        const optimalTeamChanges = output.filter((o) => o.floorID == d.id);
+        const optimalTeamChanges = output.filter((o) => o.floorID === d.id);
         return {
           ...d,
           id: i,
@@ -281,8 +310,6 @@ export default function App() {
     );
   }
 
-  console.log("re-render");
-
   return (
     <div className="bg-gradient-to-r from-cyan-500 to-blue-500 min-h-screen">
       <header className="min-h-[50px] h-[10vh] rounded-b-lg bg-opacity-30 bg-blue-800 mx-[5vw] flex">
@@ -293,17 +320,19 @@ export default function App() {
         </div>
       </header>
       <div className="mb-[8vh]">
-        <div className="grid min-h-[70vh] grid-rows-2 grid-cols-1 lg:grid-cols-2 lg:grid-rows-1 gap-[1vw]">
+        <div className="grid min-h-[70vh] grid-rows-2 grid-cols-1 lg:grid-cols-2 lg:grid-rows-1">
           <div className="min-h-full h-[75vh] lg:h-[100vh] m-8 grid grid-rows-2 gap-10">
             <div className="bg-white bg-opacity-25 rounded-lg">
               <DataGrid
+                disableColumnMenu
                 components={{
                   Toolbar: GridToolBar,
                 }}
                 componentsProps={{
                   toolbar: {
                     onClickAdd: addTeamRow,
-                    onClickRemove: {},
+                    onClickRemove: removeTeamRow,
+                    title: "Building Teams",
                   },
                 }}
                 sx={{ borderWidth: "5px" }}
@@ -311,17 +340,22 @@ export default function App() {
                 experimentalFeatures={{ newEditingApi: true }}
                 rows={teams}
                 columns={teamColumns}
+                onRowClick={(e) => {
+                  setSelected({ ...selected, teamSelected: e.row.id });
+                }}
               />
             </div>
             <div className="bg-white bg-opacity-25 rounded-lg">
               <DataGrid
+                disableColumnMenu
                 components={{
                   Toolbar: GridToolBar,
                 }}
                 componentsProps={{
                   toolbar: {
                     onClickAdd: addFloorRow,
-                    onClickRemove: {},
+                    onClickRemove: removeFloorRow,
+                    title: "Building Floors",
                   },
                 }}
                 sx={{
@@ -334,6 +368,9 @@ export default function App() {
                 experimentalFeatures={{ newEditingApi: true }}
                 rows={floors}
                 columns={floorColumns}
+                onRowClick={(e) => {
+                  setSelected({ ...selected, floorSelected: e.row.id });
+                }}
               />
             </div>
           </div>
@@ -363,7 +400,7 @@ export default function App() {
                     ? `Saving...`
                     : save.errored
                     ? `Error! Try Again.`
-                    : save.key == ""
+                    : save.key === ""
                     ? ``
                     : `Saved! Your key is: ${save.key}`}
                 </p>
@@ -410,15 +447,26 @@ export default function App() {
 
 function GridToolBar(props) {
   return (
-    <GridToolbarContainer>
-      <Button onClick={props.onClickAdd} className="inline-block">
-        <PlusCircledIcon className="inline-block align-middle mb-[0.25em] mr-1" />
-        <span>Add Row</span>
-      </Button>
-      <Button onClick={props.onClickRemove} className="inline-block">
-        <TrashIcon className="inline-block align-middle mb-[0.25em] mr-1" />
-        <span>Remove Selected Row</span>
-      </Button>
+    <GridToolbarContainer className="grid grid-rows-2 lg:grid-rows-3 gap-5 my-2">
+      <div className="row-span-1 mx-1 ml-5">
+        <p className="text-center font-bold text-xl text-white">
+          {props.title}
+        </p>
+      </div>
+      <div className="row-span-1 lg:row-span-2 grid grid-cols-2">
+        <div className="ml-5">
+          <Button onClick={props.onClickAdd}>
+            <PlusCircledIcon className="inline-block align-middle mb-[0.25em] mr-1" />
+            <span>Add Row</span>
+          </Button>
+        </div>
+        <div className="">
+          <Button className="mx-auto mr-5" onClick={props.onClickRemove}>
+            <TrashIcon className="inline-block align-middle mb-[0.25em] mr-1" />
+            <span>Remove Selected Row</span>
+          </Button>
+        </div>
+      </div>
     </GridToolbarContainer>
   );
 }

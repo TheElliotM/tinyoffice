@@ -1,10 +1,13 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from itertools import chain, combinations, product
+from flask_pymongo import PyMongo
 import json
 import copy
 
 app = Flask(__name__)
 # app.config["DEBUG"] = True
+app.config["MONGO_URI"] = "mongodb://165.91.13.149/Office"
+mongo = PyMongo(app)
 
 # Returns the powerset of the list (code taken from itertools documentation)
 def powerset(iterable):
@@ -187,6 +190,16 @@ def generate():
         return {f"{request_floors[i]['id']}": [team_ids_end[temp] for temp in scores[-1][i]] for i in range(num_floors)}
 
     # ((7,), (2, 3), (1, 11), (4,), (6, 10), 0.9655172413793104, 0.7272727272727273, 1.0, 1.5688050112220524)
+
+@app.route("/save", methods = ["POST"])
+def save():
+    pass
+
+@app.route("/load", methods = ["GET"])
+def load():
+    online_users = mongo.db.company.find()
+    return online_users
+
 
 if __name__ == '__main__':
     app.run(debug=True)
