@@ -1,16 +1,16 @@
 from flask import Flask, request, render_template
-#from flask_cors import CORS
+from flask_cors import CORS
 from itertools import chain, combinations, product
-#from flask_pymongo import PyMongo
+from flask_pymongo import PyMongo
 import json
 import copy
 
 app = Flask(__name__)
 # app.config["DEBUG"] = True
-#cors = CORS(app)
+cors = CORS(app)
 # app.config["CORS_HEADERS"] = "Content-Type"
-#app.config["MONGO_URI"] = "mongodb://165.91.13.149/Office"
-#mongo = PyMongo(app)
+app.config["MONGO_URI"] = "mongodb://165.91.13.149/Office"
+mongo = PyMongo(app)
 
 # Returns the powerset of the list (code taken from itertools documentation)
 def powerset(iterable):
