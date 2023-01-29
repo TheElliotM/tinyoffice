@@ -1,71 +1,86 @@
 {
-  "floors": {
-    "A": 43,
-    "B": 81,
-    "C": 73,
-    "D": 54,
-    "E": 97
-  },
-  "teams": {
-    "1": {
+  "floors": [
+    {
+      "name": "A",
+      "capacity": 43
+    },
+    {
+      "name": "B",
+      "capacity": 63
+    },
+    {
+      "name": "C",
+      "capacity": 85
+    },
+    {
+      "name": "D",
+      "capacity": 37
+    },
+    {
+      "name": "E",
+      "capacity": 46
+    }
+  ],
+  "teams": [
+    {
+      "name": "1",
       "strength": 22,
       "preferred": ["2", "4", "6", "11"],
-      "tolerated": ["3, 8, 10"],
       "noway": ["5", "11", "9"]
     },
-    "2": {
+    {
+      "name": "2",
       "strength": 22,
       "preferred": ["2", "4", "6", "11"],
-      "tolerated": ["3, 8, 10"],
       "noway": ["5", "11", "9"]
     },
-    "3": {
+    {
+      "name": "3",
       "strength": 22,
       "preferred": ["2", "4", "6", "11"],
-      "tolerated": ["3, 8, 10"],
       "noway": ["5", "11", "9"]
     },
-    "4": {
+    {
+      "name": "4",
       "strength": 22,
       "preferred": ["2", "4", "6", "11"],
-      "tolerated": ["3, 8, 10"],
       "noway": ["5", "11", "9"]
     },
-    "5": {
+    {
+      "name": "5",
       "strength": 22,
       "preferred": ["2", "4", "6", "11"],
-      "tolerated": ["3, 8, 10"],
       "noway": ["5", "11", "9"]
     },
-    "6": {
+    {
+      "name": "6",
       "strength": 22,
       "preferred": ["2", "4", "6", "11"],
-      "tolerated": ["3, 8, 10"],
       "noway": ["5", "11", "9"]
     },
-    "7": {
+    {
+      "name": "7",
       "strength": 22,
       "preferred": ["2", "4", "6", "11"],
-      "tolerated": ["3, 8, 10"],
       "noway": ["5", "11", "9"]
     },
-    "8": {
+    {
+      "name": "8",
       "strength": 22,
       "preferred": ["2", "4", "6", "11"],
-      "tolerated": ["3, 8, 10"],
       "noway": ["5", "11", "9"]
     },
-    "9": {
+    {
+      "name": "9",
       "strength": 22,
       "preferred": ["2", "4", "6", "11"],
-      "tolerated": ["3, 8, 10"],
       "noway": ["5", "11", "9"]
     },
-    "10": {
+    {
+      "name": "10",
       "strength": 22,
       "preferred": ["2", "4", "6", "11"],
-      "tolerated": ["3, 8, 10"],
       "noway": ["5", "11", "9"]
     }
-  }
+  ]
 }
