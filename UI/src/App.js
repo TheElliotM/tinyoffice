@@ -1,27 +1,30 @@
 import Office from "./components/office"
+import React from 'react';
+import datafile from './data.json'
+import { Settings2 } from "lucide-react"
+import Input from './components/input'
 
 function App() {
-  let data = {}
+  let data = datafile
 
   return (
     <div className="bg-gradient-to-r from-cyan-500 to-blue-500 min-h-screen">
       <header className="min-h-[50px] h-[10vh] rounded-b-lg bg-opacity-30 bg-blue-800 mx-[5vw] flex">
         <div className="mx-auto my-auto">
-          <p className="text-white font-bold text-xl">
+          <p className="text-white font-bold text-xl md:text-2xl lg:text-3xl">
             Building Floor Planner for Teams
           </p>
         </div>
       </header>
       <div className="mb-[8vh]">
         <div className="grid min-h-[70vh] grid-rows-2 grid-cols-1 lg:grid-cols-2 lg:grid-rows-1 gap-[1vw]">
-          <div className="min-h-[50vh] max-w-full"><Office data={data}></Office></div>
+          <div className="bg-white bg-opacity-25 rounded-lg m-8 min-h-[50vh] max-w-full"><Office data={data}></Office></div>
           <div>
             <div className="bg-white bg-opacity-25 rounded-lg h-full m-8">
-              <p></p>
+
             </div>
           </div>
         </div>
-
       </div>
       <footer className="mt-[15vh]">
         <div className="text-white text-center mx-[10vw] rounded-t-lg bg-opacity-30 bg-blue-800 min-h-[70px] h-[10vh]">
