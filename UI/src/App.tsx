@@ -50,7 +50,7 @@ export default function App() {
       headerName: "Team Name",
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
         const newValue = params.props.value;
-        const filtered = teams.filter((o) => o.id == params.id);
+        const filtered = teams.filter((o) => o.id === params.id);
         const hasError = !(
           params.hasChanged &&
           newValue.match(/^[A-Za-z0-9 ]+$/) &&
@@ -71,7 +71,7 @@ export default function App() {
       flex: 0.1,
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
         const newValue = params.props.value;
-        const filtered = teams.filter((o) => o.id == params.id);
+        const filtered = teams.filter((o) => o.id === params.id);
         const hasError = !(
           params.hasChanged &&
           !isNaN(newValue) &&
@@ -92,7 +92,7 @@ export default function App() {
       flex: 0.3,
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
         const newValue = params.props.value;
-        const filtered = teams.filter((o) => o.id == params.id);
+        const filtered = teams.filter((o) => o.id === params.id);
         const hasError = !(
           params.hasChanged &&
           newValue.match(/^[A-Za-z0-9, ]+$/) &&
@@ -115,7 +115,7 @@ export default function App() {
       flex: 0.3,
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
         const newValue = params.props.value;
-        const filtered = teams.filter((o) => o.id == params.id);
+        const filtered = teams.filter((o) => o.id === params.id);
         const hasError = !(
           params.hasChanged &&
           newValue.match(/^[A-Za-z0-9, ]+$/) &&
@@ -140,7 +140,7 @@ export default function App() {
       headerName: "Floor Name",
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
         const newValue = params.props.value;
-        const filtered = floors.filter((o) => o.id == params.id);
+        const filtered = floors.filter((o) => o.id === params.id);
         const hasError = !(
           params.hasChanged &&
           newValue.match(/^[A-Za-z0-9, ]+$/) &&
@@ -160,7 +160,7 @@ export default function App() {
       headerName: "Capacity",
       preProcessEditCellProps: (params: GridPreProcessEditCellProps) => {
         const newValue = params.props.value;
-        const filtered = floors.filter((o) => o.id == params.id);
+        const filtered = floors.filter((o) => o.id === params.id);
         const hasError = !(
           params.hasChanged &&
           !isNaN(newValue) &&
@@ -234,7 +234,7 @@ export default function App() {
 
   function removeTeamRow() {
     const teamsCopy = [...teams];
-    const filtered = teams.filter((o) => o.id == selected.teamSelected);
+    const filtered = teams.filter((o) => o.id === selected.teamSelected);
     if (filtered.length > 0) {
       teamsCopy.splice(teamsCopy.indexOf(filtered[0]), 1);
       setTeams(teamsCopy);
@@ -243,7 +243,7 @@ export default function App() {
 
   function removeFloorRow() {
     const floorsCopy = [...floors];
-    const filtered = floors.filter((o) => o.id == selected.floorSelected);
+    const filtered = floors.filter((o) => o.id === selected.floorSelected);
     if (filtered.length > 0) {
       floorsCopy.splice(floorsCopy.indexOf(filtered[0]), 1);
       setFloors(floorsCopy);
@@ -297,7 +297,7 @@ export default function App() {
 
     setFloors(
       floors.map((d, i) => {
-        const optimalTeamChanges = output.filter((o) => o.floorID == d.id);
+        const optimalTeamChanges = output.filter((o) => o.floorID === d.id);
         return {
           ...d,
           id: i,
@@ -400,7 +400,7 @@ export default function App() {
                     ? `Saving...`
                     : save.errored
                     ? `Error! Try Again.`
-                    : save.key == ""
+                    : save.key === ""
                     ? ``
                     : `Saved! Your key is: ${save.key}`}
                 </p>
