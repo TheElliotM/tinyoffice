@@ -1,16 +1,16 @@
 from flask import Flask, request, render_template
-from flask_cors import CORS
+#from flask_cors import CORS
 from itertools import chain, combinations, product
-from flask_pymongo import PyMongo
+#from flask_pymongo import PyMongo
 import json
 import copy
 
 app = Flask(__name__)
 # app.config["DEBUG"] = True
-cors = CORS(app)
+#cors = CORS(app)
 # app.config["CORS_HEADERS"] = "Content-Type"
-app.config["MONGO_URI"] = "mongodb://165.91.13.149/Office"
-mongo = PyMongo(app)
+#app.config["MONGO_URI"] = "mongodb://165.91.13.149/Office"
+#mongo = PyMongo(app)
 
 # Returns the powerset of the list (code taken from itertools documentation)
 def powerset(iterable):
@@ -66,7 +66,9 @@ def generate():
     request_teams = request_data["teams"]
 
     num_teams = len(request_teams)
-    teams = [list(range(1, num_teams + 1))] * num_teams
+    teams = []
+    for i in range(num_teams):
+        teams.append(list(range(1, num_teams + 1)))
     team_names = {request_teams[i]["name"] : i + 1 for i in range(len(teams))}
     team_ids_end = {i + 1 : request_teams[i]["id"] for i in range(len(teams))}
     strengths = {i + 1: request_teams[i]["strength"] for i in range(len(teams))}
@@ -85,7 +87,8 @@ def generate():
     # print()
     # print(f"num_teams: {num_teams}")
     # print(f"teams: {teams}")
-    # print(f"team ids: {team_ids}")
+    # print(f"team names: {team_names}")
+    # print(f"team ids: {team_ids_end}")
     # print(f"strengths: {strengths}")
     # print(f"prefers: {prefers}")
     # print(f"no_ways: {no_ways}")
@@ -94,15 +97,23 @@ def generate():
     # print(f"floors: {floors}")
     # print(f"total_space: {total_space}")
 
-    for i in range(1, num_teams):
+    #print()
+    #print(teams)
+    #print()
+    for i in range(1, num_teams + 1):
+        #print(f"i: {i}")
         nos = no_ways[i]
         for no in nos:
             try:
+                #print(f"Removing {no} from team {i}.")
                 teams[i - 1].remove(no)
+                #print(teams)
             except:
                 continue
             if i in teams[no - 1]:
+                #print(f"Removing {i} from team {no}.")
                 teams[no - 1].remove(i)
+                #print(teams)
 
     # floors_final is the list of all possible teams on all floors
     # floors_final[index] is the list of all possible teams on the indexth floor (starting from index = 0)
@@ -114,6 +125,7 @@ def generate():
     temp_floor = []
     temp_subsets = []
     strength_sum = 0
+    #print(floors_final)
 
     for index, floor in enumerate(floors_final):
         for i in range(num_teams):
@@ -132,10 +144,10 @@ def generate():
                     invalid = False
             subsets = temp_subsets
             floors_final[index][i] = subsets
-        # print(f"FLOOR {index}")
-        # for i in range(num_teams):
-        #     print(f"Team {i + 1} can be with {floors_final[index][i]}")
-        # print(floors_final)
+        #print(f"FLOOR {index}")
+        #for i in range(num_teams):
+            #print(f"Team {i + 1} can be with {floors_final[index][i]}")
+        #print(floors_final)
 
     all_combinations = []
     floor_combinations = []
@@ -189,7 +201,7 @@ def generate():
     if scores == []:
         return {"error": "No matches found."}
     else:
-        # print({f"{request_floors[i]['id']}": scores[-1][i] for i in range(num_floors)})
+        #print({f"{request_floors[i]['id']}": scores[-1][i] for i in range(num_floors)})
         return {f"{request_floors[i]['id']}": [team_ids_end[temp] for temp in scores[-1][i]] for i in range(num_floors)}
 
     # ((7,), (2, 3), (1, 11), (4,), (6, 10), 0.9655172413793104, 0.7272727272727273, 1.0, 1.5688050112220524)
