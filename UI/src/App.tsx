@@ -9,13 +9,7 @@ import {
   GridToolbarContainer,
 } from "@mui/x-data-grid";
 import { randInt } from "three/src/math/MathUtils";
-import {
-  PlusCircledIcon,
-  TrashIcon,
-  RocketIcon,
-  DownloadIcon,
-  UploadIcon,
-} from "@radix-ui/react-icons";
+import { PlusCircledIcon, TrashIcon, RocketIcon } from "@radix-ui/react-icons";
 
 export default function App() {
   const [floors, setFloors] = useState(
@@ -33,7 +27,6 @@ export default function App() {
     key: "",
     errored: false,
   });
-  const [key, setKey] = useState("");
   const [selected, setSelected] = useState({
     teamSelected: 0,
     floorSelected: 0,
@@ -227,70 +220,9 @@ export default function App() {
     }
   }
 
-  async function saveData() {
-    setSave({
-      isSaving: true,
-      errored: false,
-      key: "",
-    });
-
-    const fetchStr =
-      "https://api.tinyoffice.tech/save?params=" +
-      JSON.stringify({
-        floors: floors,
-        teams: teams,
-      });
-
-    //API CALL
-    fetch(fetchStr)
-      .then((res) => res.json())
-      .then((data) => {
-        setSave({
-          isSaving: false,
-          errored: false,
-          key: data.key,
-        });
-      })
-      .catch((e) => {
-        setSave({
-          isSaving: false,
-          errored: true,
-          key: "",
-        });
-      });
-
-    setSave({
-      isSaving: false,
-      errored: false,
-      key: "523632",
-    });
-  }
-
-  async function loadData(key) {
-    if (isNaN(key)) return;
-
-    fetch("https://api.tinyoffice.tech/load?key=" + key)
-      .then((res) => res.json())
-      .then((newData) => {
-        setFloors(
-          newData.floors.map((d) => {
-            return { ...d, optimalteams: `${key}` };
-          })
-        );
-        setTeams(
-          newData.teams.map((d) => {
-            return { ...d };
-          })
-        );
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }
-
   async function generateData() {
     const fetchStr =
-      "http://localhost:5000/generate?params=" +
+      "https://api.tinyoffice.tech/generate?params=" +
       JSON.stringify({
         floors: floors,
         teams: teams,
