@@ -3,6 +3,7 @@ Tiny Office is a TAMUhack 2023 Project that sorts teams into office floors based
 This was done in collaboration with Elliot Michlin, Salina Teng, Andrew Zheng, Summer Wong.
 
 Try It (hosted on Microsoft Azure) -> [Live Link](https://ambitious-mud-0168f4010.2.azurestaticapps.net/)
+
 View Our Submission Page -> [DevPost](https://devpost.com/software/tiny-office-6i9ekx#updates)
 
 ## Inspiration
