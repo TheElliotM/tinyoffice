@@ -2,9 +2,9 @@
 Tiny Office is a TAMUhack 2023 Project that sorts teams into office floors based on sizing, capacities, and working preferences.
 This was done in collaboration with Elliot Michlin, Salina Teng, Andrew Zheng, Summer Wong.
 
-Try It (hosted on Microsoft Azure) -> [Live Link](https://ambitious-mud-0168f4010.2.azurestaticapps.net/)
+### Try It At [tinyoffice.michlin.dev](https://tinyoffice.michlin.dev)
 
-View Our Submission Page -> [DevPost](https://devpost.com/software/tiny-office-6i9ekx#updates)
+### View Our Submission Page on [DevPost](https://devpost.com/software/tiny-office-6i9ekx#updates)
 
 ## Inspiration
 We were inspired by the challenging and logical nature, as well as the applicability, of the CBRE sponsor challenge. Optimization is necessary in order to create a more productive, efficient, and healthy work place, which our application aims to solve. We were eager to try our hand at tackling this problem in order to effect positive change through our project.
