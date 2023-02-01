@@ -1,6 +1,6 @@
 {
-  "short_name": "Floor Team Planner",
-  "name": "Building Floor Planner for Teams",
+  "short_name": "Tiny Office",
+  "name": "Tiny Office: A Building Floor Planner for Teams",
   "icons": [],
   "start_url": ".",
   "display": "standalone",
