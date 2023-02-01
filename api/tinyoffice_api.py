@@ -10,6 +10,15 @@ from bson import json_util, ObjectId
 # app.config["DEBUG"] = True
 app = Flask(__name__)
 
+# get token from token.txt file so we can auth into mongo server
+# token = open("token.txt", "r")
+
+# cluster = MongoClient(token.read())
+# db = cluster["Office"]
+# collection = db["company"]
+
+# token.close()
+
 # app.config["DEBUG"] = True
 cors = CORS(app)
 
@@ -224,5 +233,5 @@ def generate():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=6939)
     
