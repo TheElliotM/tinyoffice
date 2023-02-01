@@ -10,10 +10,6 @@ from bson import json_util, ObjectId
 # app.config["DEBUG"] = True
 app = Flask(__name__)
 
-# cluster = MongoClient("mongodb+srv://Nali:yora767ge@th-2023.etc6vuw.mongodb.net/test")
-# db = cluster["Office"]
-# collection = db["company"]
-
 # app.config["DEBUG"] = True
 cors = CORS(app)
 
