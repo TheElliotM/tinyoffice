@@ -223,7 +223,7 @@ export default function App() {
     );
 
     const fetchStr =
-      "https://api.tinyoffice.tech/generate?params=" +
+      "https://api.michlin.dev/tinyoffice/generate?params=" +
       JSON.stringify({
         floors: floors,
         teams: teams,

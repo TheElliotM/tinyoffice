@@ -45,7 +45,7 @@ def like_score_calculation(like_score, building):
     else:
         return (like_score / count) / 2 
 
-@app.route("/generate", methods = ["GET"])
+@app.route("/tinyoffice/generate", methods = ["GET"])
 def generate():
 
     # "floors": [
@@ -216,7 +216,7 @@ def generate():
 
     # ((7,), (2, 3), (1, 11), (4,), (6, 10), 0.9655172413793104, 0.7272727272727273, 1.0, 1.5688050112220524)
 
-# @app.route("/save", methods = ["GET"])
+# @app.route("/tinyoffice/save", methods = ["GET"])
 # def save():
 #     request_data = json.loads(request.args.get("params"))
 #     request_floors = request_data["floors"]
@@ -225,7 +225,7 @@ def generate():
 #     insertion = db.company.insert_one(request_total)
 #     return {"key": str(insertion.inserted_id)}
 
-# @app.route("/load", methods = ["GET"])
+# @app.route("/tinyoffice/load", methods = ["GET"])
 # def load():
 #     companyID = request.args.get("key")
 #     data = db.company.find_one(ObjectId(companyID))
