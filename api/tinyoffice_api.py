@@ -233,5 +233,6 @@ def generate():
 
 
 if __name__ == '__main__':
-    app.run(port=6939)
+    from waitress import serve
+    serve(app, host="localhost", port=6939)
     
