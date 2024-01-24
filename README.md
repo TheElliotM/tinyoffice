@@ -12,7 +12,7 @@ We were inspired by the challenging and logical nature, as well as the applicabi
 ## What it does
 Our application allows the user to input the building floors and teams needed to be assigned to said floors. After the user inputs the data, our algorithm takes in the data and outputs the floor-team combination with the highest "SNL score" - our term for the combined weightings of the space-score (measures the amount of space taken), the number-score (measures the total number of teams in the building), and the like-score (measures the relationships between team pairings on each floor). In addition, our project also provides the user with saving and loading features.
 
-![An image showing the website. There are three sections: a table to input team preferences, a table to input floor sizes, and a generate button.](https://x.xcal.dev/msedge_4xcAfV%202.png)
+![An image showing the website. There are three sections: a table to input team preferences, a table to input floor sizes, and a generate button.](https://x.michlin.dev/msedge_4xcAfV%202.png)
 
 ## How we built it
 We built our application using ReactJS + TailwindCSS for the front end and Flask for the back end. In addition, MongoDB hosted save data for users behind keys that a user recieves once a configuration is built to their liking. We then hosted our application through Microsoft Azure cloud services and our domain on domain.com.
