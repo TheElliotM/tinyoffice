@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "https://tinyoffice.michlin.dev/static/css/main.ccf6c5af.css",
-    "main.js": "https://tinyoffice.michlin.dev/static/js/main.7e13b851.js",
+    "main.css": "https://tinyoffice.michlin.dev/static/css/main.52950e20.css",
+    "main.js": "https://tinyoffice.michlin.dev/static/js/main.0aa70197.js",
     "index.html": "https://tinyoffice.michlin.dev/index.html",
-    "main.ccf6c5af.css.map": "https://tinyoffice.michlin.dev/static/css/main.ccf6c5af.css.map",
-    "main.7e13b851.js.map": "https://tinyoffice.michlin.dev/static/js/main.7e13b851.js.map"
+    "main.52950e20.css.map": "https://tinyoffice.michlin.dev/static/css/main.52950e20.css.map",
+    "main.0aa70197.js.map": "https://tinyoffice.michlin.dev/static/js/main.0aa70197.js.map"
   },
   "entrypoints": [
-    "static/css/main.ccf6c5af.css",
-    "static/js/main.7e13b851.js"
+    "static/css/main.52950e20.css",
+    "static/js/main.0aa70197.js"
   ]
 }
